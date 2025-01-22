@@ -102,47 +102,48 @@ else:
         st.markdown(f'<span style="color:{color}">{fitness_message}</span>', unsafe_allow_html=True)
 
         # Visualization options
-        chart_type = st.selectbox("Select a chart type", ['Bar Chart', 'Pie Chart'])
+        tab1, tab2 = st.tabs(["Bar Chart📊", "Pie Chart 📈"])
 
-        if chart_type == 'Bar Chart':
-            metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
-            values = [
-                user_input['gripForce'].iloc[0],
-                user_input['sit-ups counts'].iloc[0],
-                user_input['broad jump_cm'].iloc[0],
-                user_input['body fat_%'].iloc[0]
-            ]
-            
-            bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
-            bar_chart = alt.Chart(bar_data).mark_bar().encode(
-                x='Metric:O',
-                y='Value:Q',
-                color='Metric:N'
-            ).properties(
-                title="Comparison of Fitness Metrics"
-            )
-            st.altair_chart(bar_chart, use_container_width=True)
+with tab1:
+    metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
+    values = [
+        user_input['gripForce'].iloc[0],
+        user_input['sit-ups counts'].iloc[0],
+        user_input['broad jump_cm'].iloc[0],
+        user_input['body fat_%'].iloc[0]
+    ]
+    
+    bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
+    bar_chart = alt.Chart(bar_data).mark_bar().encode(
+        x='Metric:O',
+        y='Value:Q',
+        color='Metric:N'
+    ).properties(
+        title="Comparison of Fitness Metrics"
+    )
+    st.altair_chart(bar_chart, use_container_width=True)
 
-        elif chart_type == 'Pie Chart':
-            pie_data = pd.DataFrame({
-                'Category': ['High Body Fat', 'Normal Body Fat', 'Low Body Fat'],
-                'Value': [
-                    user_input['body_fat_category_High'].iloc[0],
-                    user_input['body_fat_category_Normal'].iloc[0],
-                    user_input['body_fat_category_Low'].iloc[0]
-                ]
-            })
+with tab2:
+    pie_data = pd.DataFrame({
+        'Category': ['High Body Fat', 'Normal Body Fat', 'Low Body Fat'],
+        'Value': [
+            user_input['body_fat_category_High'].iloc[0],
+            user_input['body_fat_category_Normal'].iloc[0],
+            user_input['body_fat_category_Low'].iloc[0]
+        ]
+    })
 
-            if pie_data['Value'].sum() == 0:
-                st.write("No data available for body fat categories.")
-            else:
-                pie_chart = alt.Chart(pie_data).mark_arc().encode(
-                    theta='Value',
-                    color='Category'
-                ).properties(
-                    title="Body Fat Categories"
-                )
-                st.altair_chart(pie_chart, use_container_width=True)
+    if pie_data['Value'].sum() == 0:
+        st.write("No data available for body fat categories.")
+    else:
+        pie_chart = alt.Chart(pie_data).mark_arc().encode(
+            theta='Value',
+            color='Category'
+        ).properties(
+            title="Body Fat Categories"
+        )
+        st.altair_chart(pie_chart, use_container_width=True)
+
 
         # Display height and weight chart
         with st.container():
