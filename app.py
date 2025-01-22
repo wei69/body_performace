@@ -13,6 +13,7 @@ st.markdown(
         background-size: cover;
         background-position: center center;
         background-attachment: fixed;
+        color: white; 
         
         
     }
