@@ -4,6 +4,22 @@ import joblib
 import altair as alt
 import numpy as np
 
+# Add background image via custom CSS
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbfDAWy8FhkWk5-3vUSDWnR6FMjFKKPiMN-Q&s');  /* You can also use a local path */
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+        
+        
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 # Load the pre-trained model and scaler
 model = joblib.load('gl.pkl')
 scaler = joblib.load('scaler.pkl')
@@ -83,6 +99,7 @@ else:
 
         with col1:
             st.metric("🏋️ Weight", f"{user_input['weight'].iloc[0]} kg")
+            
 
         with col2:
             st.metric("📏 Height", f"{user_input['height'].iloc[0]} cm")
@@ -104,59 +121,42 @@ else:
         # Visualization options
         tab1, tab2 = st.tabs(["Bar Chart📊", "Pie Chart 📈"])
 
-with tab1:
-    metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
-    values = [
-        user_input['gripForce'].iloc[0],
-        user_input['sit-ups counts'].iloc[0],
-        user_input['broad jump_cm'].iloc[0],
-        user_input['body fat_%'].iloc[0]
-    ]
-    
-    bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
-    bar_chart = alt.Chart(bar_data).mark_bar().encode(
-        x='Metric:O',
-        y='Value:Q',
-        color='Metric:N'
-    ).properties(
-        title="Comparison of Fitness Metrics"
-    )
-    st.altair_chart(bar_chart, use_container_width=True)
-
-with tab2:
-    pie_data = pd.DataFrame({
-        'Category': ['High Body Fat', 'Normal Body Fat', 'Low Body Fat'],
-        'Value': [
-            user_input['body_fat_category_High'].iloc[0],
-            user_input['body_fat_category_Normal'].iloc[0],
-            user_input['body_fat_category_Low'].iloc[0]
+    with tab1:
+        metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
+        values = [
+            user_input['gripForce'].iloc[0],
+            user_input['sit-ups counts'].iloc[0],
+            user_input['broad jump_cm'].iloc[0],
+            user_input['body fat_%'].iloc[0]
         ]
-    })
-
-    if pie_data['Value'].sum() == 0:
-        st.write("No data available for body fat categories.")
-    else:
-        pie_chart = alt.Chart(pie_data).mark_arc().encode(
-            theta='Value',
-            color='Category'
+        
+        bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
+        bar_chart = alt.Chart(bar_data).mark_bar().encode(
+            x='Metric:O',
+            y='Value:Q',
+            color='Metric:N'
         ).properties(
-            title="Body Fat Categories"
+            title="Comparison of Fitness Metrics"
         )
-        st.altair_chart(pie_chart, use_container_width=True)
+        st.altair_chart(bar_chart, use_container_width=True)
 
+    with tab2:
+        pie_data = pd.DataFrame({
+            'Category': ['High Body Fat', 'Normal Body Fat', 'Low Body Fat'],
+            'Value': [
+                user_input['body_fat_category_High'].iloc[0],
+                user_input['body_fat_category_Normal'].iloc[0],
+                user_input['body_fat_category_Low'].iloc[0]
+            ]
+        })
 
-        # Display height and weight chart
-        with st.container():
-            trend_df = pd.DataFrame({
-                'Metric': ['Grip_force', 'Sit-Ups'],
-                'Value': [user_input['gripForce'].iloc[0], user_input['sit-ups counts'].iloc[0]]
-            })
-
-            bar_chart = alt.Chart(trend_df).mark_bar().encode(
-                x='Metric:O',
-                y='Value:Q',
-                color='Metric:N'
+        if pie_data['Value'].sum() == 0:
+            st.write("No data available for body fat categories.")
+        else:
+            pie_chart = alt.Chart(pie_data).mark_arc().encode(
+                theta='Value',
+                color='Category'
             ).properties(
-                title="grip_force and Weight"
+                title="Body Fat Categories"
             )
-            st.altair_chart(bar_chart, use_container_width=True)
+            st.altair_chart(pie_chart, use_container_width=True)
