@@ -77,7 +77,7 @@ def get_user_input():
 
 # Get user input
 user_input = get_user_input()
-
+st.title("Predicting Your Body Performance Metrics")
 # Check for missing values
 if np.any(user_input.isnull().values):
     st.error("Input data contains missing values. Please check your inputs.")
@@ -113,9 +113,18 @@ else:
                 custom_metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "✅ Normal")
 
         # Title and prediction
-        st.title("Predicting Your Body Performance Metrics")
+   
         st.subheader("**Your Body-performance Prediction**")
-        st.subheader(f"{prediction[0]}")
+        
+        # Modify prediction label to match fitness categories (A = fittest, D = least fit)
+        performance_categories = {
+            'A': '💪 Fittest',
+            'B': '👍 Above Average',
+            'C': '🧑‍🦱 Average',
+            'D': '⚡ Least Fit'
+        }
+        
+        st.subheader(f"**Fitness Category: {performance_categories.get(prediction[0], 'Unknown')}**")
 
         # Visualization options
         tab1, tab2 = st.tabs(["Bar Chart📊", "Pie Chart 📈"])
