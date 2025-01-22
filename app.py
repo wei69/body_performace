@@ -105,14 +105,14 @@ else:
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.metric("🏋️ Weight", f"{user_input['weight'].iloc[0]} kg")
+            st.metric("🏋️ Weight", f"{user_input['weight'].iloc[0]} kg", color="white")
             
 
-        with col2:
-            st.metric("📏 Height", f"{user_input['height'].iloc[0]} cm")
+        with col2: 
+            st.metric("📏 Height", f"{user_input['height'].iloc[0]} cm", color="white")
 
         with col3:
-            body_fat_percent = user_input['body fat_%'].iloc[0] ; 
+            body_fat_percent = user_input['body fat_%'].iloc[0] ,color="white" ; 
             if body_fat_percent > 27:
                 st.metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "🔥 High")
             elif body_fat_percent < 17:
