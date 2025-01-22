@@ -15,6 +15,13 @@ st.markdown(
         background-attachment: fixed;
         color: white; 
     }
+    .stTabs .stTab {
+      color: white;
+    }
+
+    .stTabs .stTab:hover {
+        background-color: lightgray;
+    }
     </style>
     """, unsafe_allow_html=True
 )
@@ -127,7 +134,7 @@ else:
         st.subheader(f"**Fitness Category: {performance_categories.get(prediction[0], 'Unknown')}**")
 
         # Visualization options
-        tab1, tab2 = st.tabs(["Bar Chart📊", "Pie Chart 📈"])
+        tab1, tab2 = st.tabs(["Bar Chart📊", "Pie Chart 📈"] )
 
         with tab1:
             metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
