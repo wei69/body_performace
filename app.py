@@ -9,7 +9,7 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbfDAWy8FhkWk5-3vUSDWnR6FMjFKKPiMN-Q&s');  /* You can also use a local path */
+        background-image: url('https://shotkit.com/wp-content/uploads/2021/08/Fitness-photography-anush-gorak.jpeg');  /* You can also use a local path */
         background-size: cover;
         background-position: center center;
         background-attachment: fixed;
