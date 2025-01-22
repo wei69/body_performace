@@ -14,22 +14,25 @@ st.markdown(
         background-position: center center;
         background-attachment: fixed;
         color: white; 
-        
-        
-    }
-      .metric {
-        color: white !important;
-    }
-    .stMetricLabel {
-        color: white !important;
-    }
-
-      .stMetricDelta {
-        color: white !important;
     }
     </style>
     """, unsafe_allow_html=True
 )
+
+# Function to render custom metric
+def custom_metric(label, value, delta=None):
+    delta_html = f"<span style='color:white;'>{delta}</span>" if delta else ""
+    st.markdown(
+        f"""
+        <div style="color: white; font-size: 1.5em; margin-bottom: 10px;">
+            <strong>{label}</strong>
+        </div>
+        <div style="color: white; font-size: 2.5em;">
+            {value} {delta_html}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # Load the pre-trained model and scaler
 model = joblib.load('gl.pkl')
@@ -91,83 +94,68 @@ else:
         prediction = None
 
     if prediction:
-        # Map prediction result to a fitness message
-        fitness_message_data = {
-            'A': ("You are very fit! 🏋️‍♂️", "green"),
-            'B': ("You are fit! 💪", "green"),
-            'C': ("You are slightly unfit. 🤔", "orange"),
-            'D': ("You are unfit. ❌", "red")
-        }
-
-        # Get the message, emoji, and color based on prediction
-        fitness_message, color = fitness_message_data.get(prediction[0], ("Unknown fitness level 🤷‍♂️", "gray"))
-
-        # Title
-        st.title("Predicting Your Body Performance Metrics")
-
-        # Display the results in columns
+        # Display the results in columns using custom HTML metrics
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.metric("🏋️ Weight", f"{user_input['weight'].iloc[0]} kg")
-            
+            custom_metric("🏋️ Weight", f"{user_input['weight'].iloc[0]} kg")
 
-        with col2: 
-            st.metric("📏 Height", f"{user_input['height'].iloc[0]} cm")
+        with col2:
+            custom_metric("📏 Height", f"{user_input['height'].iloc[0]} cm")
 
         with col3:
-            body_fat_percent = user_input['body fat_%'].iloc[0]  
+            body_fat_percent = user_input['body fat_%'].iloc[0]
             if body_fat_percent > 27:
-                st.metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "🔥 High")
+                custom_metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "🔥 High")
             elif body_fat_percent < 17:
-                st.metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "❄️ Low")
+                custom_metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "❄️ Low")
             else:
-                st.metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "✅ Normal")
+                custom_metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "✅ Normal")
 
-        # Display prediction
+        # Title and prediction
+        st.title("Predicting Your Body Performance Metrics")
         st.subheader("**Your Body-performance Prediction**")
         st.subheader(f"{prediction[0]}")
-        st.markdown(f'<span style="color:{color}">{fitness_message}</span>', unsafe_allow_html=True)
 
         # Visualization options
         tab1, tab2 = st.tabs(["Bar Chart📊", "Pie Chart 📈"])
 
-    with tab1:
-        metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
-        values = [
-            user_input['gripForce'].iloc[0],
-            user_input['sit-ups counts'].iloc[0],
-            user_input['broad jump_cm'].iloc[0],
-            user_input['body fat_%'].iloc[0]
-        ]
-        
-        bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
-        bar_chart = alt.Chart(bar_data).mark_bar().encode(
-            x='Metric:O',
-            y='Value:Q',
-            color='Metric:N'
-        ).properties(
-            title="Comparison of Fitness Metrics"
-        )
-        st.altair_chart(bar_chart, use_container_width=True)
-
-    with tab2:
-        pie_data = pd.DataFrame({
-            'Category': ['High Body Fat', 'Normal Body Fat', 'Low Body Fat'],
-            'Value': [
-                user_input['body_fat_category_High'].iloc[0],
-                user_input['body_fat_category_Normal'].iloc[0],
-                user_input['body_fat_category_Low'].iloc[0]
+        with tab1:
+            metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
+            values = [
+                user_input['gripForce'].iloc[0],
+                user_input['sit-ups counts'].iloc[0],
+                user_input['broad jump_cm'].iloc[0],
+                user_input['body fat_%'].iloc[0]
             ]
-        })
-
-        if pie_data['Value'].sum() == 0:
-            st.write("No data available for body fat categories.")
-        else:
-            pie_chart = alt.Chart(pie_data).mark_arc().encode(
-                theta='Value',
-                color='Category'
+            
+            bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
+            bar_chart = alt.Chart(bar_data).mark_bar().encode(
+                x='Metric:O',
+                y='Value:Q',
+                color='Metric:N'
             ).properties(
-                title="Body Fat Categories"
+                title="Comparison of Fitness Metrics"
             )
-            st.altair_chart(pie_chart, use_container_width=True)
+            st.altair_chart(bar_chart, use_container_width=True)
+
+        with tab2:
+            pie_data = pd.DataFrame({
+                'Category': ['High Body Fat', 'Normal Body Fat', 'Low Body Fat'],
+                'Value': [
+                    user_input['body_fat_category_High'].iloc[0],
+                    user_input['body_fat_category_Normal'].iloc[0],
+                    user_input['body_fat_category_Low'].iloc[0]
+                ]
+            })
+
+            if pie_data['Value'].sum() == 0:
+                st.write("No data available for body fat categories.")
+            else:
+                pie_chart = alt.Chart(pie_data).mark_arc().encode(
+                    theta='Value',
+                    color='Category'
+                ).properties(
+                    title="Body Fat Categories"
+                )
+                st.altair_chart(pie_chart, use_container_width=True)
