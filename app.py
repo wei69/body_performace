@@ -23,6 +23,10 @@ st.markdown(
     .stMetricLabel {
         color: white !important;
     }
+
+      .stMetricDelta {
+        color: white !important;
+    }
     </style>
     """, unsafe_allow_html=True
 )
