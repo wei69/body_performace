@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import altair as alt
-import numpy as np  # Importing numpy
+import numpy as np
 
 # Load the pre-trained model and scaler
 model = joblib.load('gl.pkl')
@@ -48,13 +48,13 @@ def get_user_input():
 # Get user input
 user_input = get_user_input()
 
-# Check for missing values and handle with numpy
+# Check for missing values
 if np.any(user_input.isnull().values):
     st.error("Input data contains missing values. Please check your inputs.")
 else:
-    # Scale the input data using numpy
-    input_array = user_input.to_numpy()  # Convert DataFrame to numpy array
-    scaled_input = scaler.transform(input_array)  # Scale the numpy array
+    # Scale the input data
+    input_array = user_input.to_numpy()
+    scaled_input = scaler.transform(input_array)
 
     # Make predictions
     try:
@@ -81,7 +81,6 @@ else:
         # Display the results in columns
         col1, col2, col3 = st.columns(3)
 
-        # Display user input metrics in respective columns
         with col1:
             st.metric("🏋️ Weight", f"{user_input['weight'].iloc[0]} kg")
 
@@ -106,7 +105,6 @@ else:
         chart_type = st.selectbox("Select a chart type", ['Bar Chart', 'Pie Chart'])
 
         if chart_type == 'Bar Chart':
-            # Display fitness metrics as a bar chart
             metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
             values = [
                 user_input['gripForce'].iloc[0],
@@ -115,10 +113,7 @@ else:
                 user_input['body fat_%'].iloc[0]
             ]
             
-            # Create a DataFrame for the bar chart
             bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
-            
-            # Create the bar chart using Altair
             bar_chart = alt.Chart(bar_data).mark_bar().encode(
                 x='Metric:O',
                 y='Value:Q',
@@ -126,12 +121,9 @@ else:
             ).properties(
                 title="Comparison of Fitness Metrics"
             )
-
-            # Display the bar chart
             st.altair_chart(bar_chart, use_container_width=True)
 
         elif chart_type == 'Pie Chart':
-            # Display body fat category as a pie chart
             pie_data = pd.DataFrame({
                 'Category': ['High Body Fat', 'Normal Body Fat', 'Low Body Fat'],
                 'Value': [
@@ -141,7 +133,6 @@ else:
                 ]
             })
 
-            # Normalize pie chart values
             if pie_data['Value'].sum() == 0:
                 st.write("No data available for body fat categories.")
             else:
@@ -154,24 +145,17 @@ else:
                 st.altair_chart(pie_chart, use_container_width=True)
 
         # Display height and weight chart
-        col4, col5 = st.columns(2)
-
-        with col4:
+        with st.container():
             trend_df = pd.DataFrame({
-                'Metric': ['Height', 'Weight'],
-                'Value': [user_input['height'].iloc[0], user_input['weight'].iloc[0]]
+                'Metric': ['Grip_force', 'Sit-Ups'],
+                'Value': [user_input['gripForce'].iloc[0], user_input['sit-ups counts'].iloc[0]]
             })
 
-            # Create a bar chart to display height and weight
             bar_chart = alt.Chart(trend_df).mark_bar().encode(
                 x='Metric:O',
                 y='Value:Q',
                 color='Metric:N'
             ).properties(
-                title="Height and Weight"
+                title="grip_force and Weight"
             )
-
-            # Display the bar chart
             st.altair_chart(bar_chart, use_container_width=True)
-    else:
-        st.error("Prediction could not be made.")
