@@ -17,6 +17,9 @@ st.markdown(
         
         
     }
+     .metric {
+        color: white !important;
+    }
     </style>
     """, unsafe_allow_html=True
 )
@@ -106,7 +109,7 @@ else:
             st.metric("📏 Height", f"{user_input['height'].iloc[0]} cm")
 
         with col3:
-            body_fat_percent = user_input['body fat_%'].iloc[0]
+            body_fat_percent = user_input['body fat_%'].iloc[0] ; 
             if body_fat_percent > 27:
                 st.metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "🔥 High")
             elif body_fat_percent < 17:
