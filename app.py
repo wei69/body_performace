@@ -9,18 +9,42 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: url('https://shotkit.com/wp-content/uploads/2021/08/Fitness-photography-anush-gorak.jpeg');  /* You can also use a local path */
+        background-image: linear-gradient(to bottom, #2f2f2f, #333333, #000000, #ff5733);
         background-size: cover;
         background-position: center center;
         background-attachment: fixed;
-        color: white; 
+        font-family: 'Arial', sans-serif;
     }
-    .stTabs .stTab {
-      color: white;
+    .stTabs [role="tablist"] {
+        display: flex;
+        border-bottom: 2px solid #ddd;
+        margin-bottom: 1em;
     }
-
-    .stTabs .stTab:hover {
-        background-color: lightgray;
+    .title {
+        color: white;
+    }
+    .stTabs [role="tab"] {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-bottom: none;
+        cursor: pointer;
+        background: #f8f9fa;
+        color: #333;
+        border-radius:12px;
+        transition: background 0.3s, color 0.3s;
+         
+    }
+    .stTabs [role="tab"][aria-selected="true"] {
+    background: #007bff;  /* Highlighted tab color */
+    color: white;          /* Text color for selected tab */
+}
+    .stTabs [role="tab"]:hover {
+        background: red;
+        color:white;
     }
     </style>
     """, unsafe_allow_html=True
@@ -84,7 +108,14 @@ def get_user_input():
 
 # Get user input
 user_input = get_user_input()
-st.title("Predicting Your Body Performance Metrics")
+
+# Set title with custom HTML
+st.markdown(
+    """
+    <h1 style="color: white; text-align: center;">Predicting Your Body Performance Metrics</h1>
+    """, unsafe_allow_html=True
+)
+
 # Check for missing values
 if np.any(user_input.isnull().values):
     st.error("Input data contains missing values. Please check your inputs.")
@@ -119,10 +150,13 @@ else:
             else:
                 custom_metric("💪 Body Fat Percentage", f"{body_fat_percent}%", "✅ Normal")
 
-        # Title and prediction
-   
-        st.subheader("**Your Body-performance Prediction**")
-        
+        # Display the fitness prediction with white color
+        st.markdown(
+            """
+            <h3 style="color: white;">Your Body-performance Prediction</h3>
+            """, unsafe_allow_html=True
+        )
+
         # Modify prediction label to match fitness categories (A = fittest, D = least fit)
         performance_categories = {
             'A': '💪 Fittest',
@@ -130,11 +164,15 @@ else:
             'C': '🧑‍🦱 Average',
             'D': '⚡ Least Fit'
         }
-        
-        st.subheader(f"**Fitness Category: {performance_categories.get(prediction[0], 'Unknown')}**")
+
+        st.markdown(
+            f"""
+            <h3 style="color: white;">Fitness Category: {performance_categories.get(prediction[0], 'Unknown')}</h3>
+            """, unsafe_allow_html=True
+        )
 
         # Visualization options
-        tab1, tab2 = st.tabs(["Bar Chart📊", "Pie Chart 📈"] )
+        tab1, tab2 = st.tabs(["Fitness metrics📊", "Body fats📈"])
 
         with tab1:
             metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
@@ -144,7 +182,7 @@ else:
                 user_input['broad jump_cm'].iloc[0],
                 user_input['body fat_%'].iloc[0]
             ]
-            
+
             bar_data = pd.DataFrame({'Metric': metrics, 'Value': values})
             bar_chart = alt.Chart(bar_data).mark_bar().encode(
                 x='Metric:O',
