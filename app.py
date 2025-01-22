@@ -20,6 +20,9 @@ st.markdown(
      .metric {
         color: white !important;
     }
+     .stMetricLabel {
+        color: white !important;
+    }
     </style>
     """, unsafe_allow_html=True
 )
