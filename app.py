@@ -9,7 +9,7 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: linear-gradient(to bottom, #2f2f2f, #333333, #000000, #ff5733);
+        background-image: linear-gradient(to bottom, #6dd5ed, #2193b0, #1e3c72, #3f51b5);
         background-size: cover;
         background-position: center center;
         background-attachment: fixed;
@@ -172,7 +172,8 @@ else:
         )
 
         # Visualization options
-        tab1, tab2 = st.tabs(["Fitness metrics📊", "Body fats📈"])
+                # Visualization options
+        tab1, tab2, tab3 = st.tabs(["Fitness metrics📊", "Body fats📈", "Prediction Probabilities🔢"])
 
         with tab1:
             metrics = ['Grip Force', 'Sit-ups Count', 'Broad Jump', 'Body Fat %']
@@ -213,3 +214,26 @@ else:
                     title="Body Fat Categories"
                 )
                 st.altair_chart(pie_chart, use_container_width=True)
+
+        with tab3:
+            # Ensure the model supports prediction probabilities
+            try:
+                prediction_probs = model.predict_proba(scaled_input)[0]
+                categories = ['A (Fittest)', 'B (Above Average)', 'C (Average)', 'D (Least Fit)']
+
+                prob_data = pd.DataFrame({
+                    'Category': categories,
+                    'Probability (%)': prediction_probs * 100
+                })
+
+                prob_chart = alt.Chart(prob_data).mark_bar().encode(
+                    x='Category:O',
+                    y='Probability (%):Q',
+                    color='Category:N'
+                ).properties(
+                    title="Prediction Probabilities"
+                )
+                st.altair_chart(prob_chart, use_container_width=True)
+            except AttributeError:
+                st.error("The model does not support probability predictions.")
+
